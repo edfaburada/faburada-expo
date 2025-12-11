@@ -1,43 +1,29 @@
 // app/index.tsx
-import { View, TouchableOpacity, Text } from 'react-native';
+import { useEffect } from 'react';
+import { View, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
-import { globalStyles } from './styles';
+import { supabase } from '../supabase';
 
-export default function Home() {
+export default function Index() {
   const router = useRouter();
 
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (session) {
+        router.replace('/dashboard'); // go to Dashboard if logged in
+      } else {
+        router.replace('/login'); // go to Login if not logged in
+      }
+    };
+
+    checkSession();
+  }, []);
+
   return (
-    <View style={globalStyles.containerHome}>
-      <Text style={globalStyles.title}>Welcome Home</Text>
-
-      <TouchableOpacity
-        style={globalStyles.button}
-        onPress={() => router.push('/profile')}
-      >
-        <Text style={globalStyles.buttonText}>Go to Profile</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={globalStyles.button}
-        onPress={() => router.push('/contact')}
-      >
-        <Text style={globalStyles.buttonText}>Go to Contact</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={globalStyles.button}
-        onPress={() => router.push('/settings')}
-      >
-        <Text style={globalStyles.buttonText}>Go to Settings</Text>
-      </TouchableOpacity>
-
-      {/* New button linking to About page */}
-      <TouchableOpacity
-        style={globalStyles.button}
-        onPress={() => router.push('/about')}
-      >
-        <Text style={globalStyles.buttonText}>Go to About</Text>
-      </TouchableOpacity>
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <ActivityIndicator size="large" color="#0000ff" />
     </View>
   );
 }
