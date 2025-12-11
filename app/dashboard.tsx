@@ -2,9 +2,25 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { supabase } from '../supabase';
 import { globalStyles } from './styles';
+import { useEffect } from 'react';
 
 export default function Dashboard() {
   const router = useRouter();
+
+  // Check if the user is logged in
+  useEffect(() => {
+    const checkUser = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session) {
+        router.replace('/login'); // redirect to login if not authenticated
+      }
+    };
+
+    checkUser();
+  }, []);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -24,10 +40,7 @@ export default function Dashboard() {
       </TouchableOpacity>
 
       {/* Logout button */}
-      <TouchableOpacity
-        style={globalStyles.button}
-        onPress={handleLogout}
-      >
+      <TouchableOpacity style={globalStyles.button} onPress={handleLogout}>
         <Text style={globalStyles.buttonText}>Logout</Text>
       </TouchableOpacity>
     </View>
