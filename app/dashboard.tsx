@@ -39,11 +39,13 @@ export default function Dashboard() {
         <Text style={globalStyles.buttonText}>Go to Notes</Text>
       </TouchableOpacity>
 
-      {/* Logout button */}
-      <TouchableOpacity style={globalStyles.button} onPress={() => router.push('/notes')}>
-        <Text style={globalStyles.buttonText}>Go to Notes</Text>
+      {/* Go Back Home Button */}
+      <TouchableOpacity
+        style={globalStyles.button}
+        onPress={() => router.push('/')}
+      >
+        <Text style={globalStyles.buttonText}>Go Back Home</Text>
       </TouchableOpacity>
-
     </View>
   );
 }
