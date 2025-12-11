@@ -1,16 +1,50 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+// app/index.tsx
 import { useRouter } from 'expo-router';
-import { globalStyles } from './styles';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
 import { supabase } from '../supabase';
+import { globalStyles } from './styles';
 
 export default function Index() {
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [session, setSession] = useState<any | null>(null);
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.replace('/login');
-  };
+  useEffect(() => {
+    const getSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      if (data.session) {
+        setSession(data.session);
+      }
+      setLoading(false);
+    };
 
+    getSession();
+
+    // Listen for auth state changes
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => listener.subscription.unsubscribe();
+  }, []);
+
+  // Show spinner while checking session
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+
+  // If no session, redirect to login
+  if (!session) {
+    router.replace('/login'); // <--- TypeScript-safe
+    return null;
+  }
+
+  // Home page after login
   return (
     <View style={globalStyles.containerHome}>
       <Text style={globalStyles.title}>Welcome Home</Text>
@@ -35,7 +69,13 @@ export default function Index() {
         <Text style={globalStyles.buttonText}>Dashboard</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={globalStyles.button} onPress={handleLogout}>
+      <TouchableOpacity
+        style={globalStyles.button}
+        onPress={async () => {
+          await supabase.auth.signOut();
+          router.replace('/login'); // <--- logout to login
+        }}
+      >
         <Text style={globalStyles.buttonText}>Logout</Text>
       </TouchableOpacity>
     </View>

@@ -1,13 +1,23 @@
+// app/_layout.tsx
 import { Stack } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { supabase } from '../supabase';
 
 export default function Layout() {
-  const [session, setSession] = useState<any>(null);
+  const [session, setSession] = useState<any | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => setSession(data.session));
+    // Get current session on mount
+    const getSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      setSession(data.session);
+      setLoading(false);
+    };
 
+    getSession();
+
+    // Listen for auth state changes (login/logout)
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
     });
@@ -15,24 +25,28 @@ export default function Layout() {
     return () => listener.subscription.unsubscribe();
   }, []);
 
+  // While loading, render nothing (or spinner if you want)
+  if (loading) return null;
+
   return (
-    <Stack>
-      {!session ? (
-        <>
-          <Stack.Screen name="login" options={{ headerShown: false }} />
-          <Stack.Screen name="register" options={{ headerShown: false }} />
-        </>
-      ) : (
-        <>
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="dashboard" options={{ headerShown: false }} />
-          <Stack.Screen name="notes" options={{ headerShown: false }} />
-          <Stack.Screen name="about" options={{ headerShown: false }} />
-          <Stack.Screen name="contact" options={{ headerShown: false }} />
-          <Stack.Screen name="profile" options={{ headerShown: false }} />
-          <Stack.Screen name="settings" options={{ headerShown: false }} />
-        </>
-      )}
-    </Stack>
+<Stack>
+  {!session ? (
+    <>
+      <Stack.Screen name="login" />
+      <Stack.Screen name="register" />
+    </>
+  ) : (
+    <>
+      <Stack.Screen name="index" />
+      <Stack.Screen name="dashboard" />
+      <Stack.Screen name="notes" />
+      <Stack.Screen name="about" />
+      <Stack.Screen name="contact" />
+      <Stack.Screen name="profile" />
+      <Stack.Screen name="settings" />
+    </>
+  )}
+</Stack>
+
   );
 }
