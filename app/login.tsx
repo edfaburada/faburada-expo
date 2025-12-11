@@ -1,5 +1,5 @@
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
-import { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'expo-router';
 import { supabase } from '../supabase';
 import { globalStyles } from './styles';
@@ -7,7 +7,22 @@ import { globalStyles } from './styles';
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(true); // For session check
   const router = useRouter();
+
+  // Check if user is already logged in
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        router.replace('/dashboard'); // redirect if already logged in
+      } else {
+        setLoading(false); // show login form if not logged in
+      }
+    };
+
+    checkSession();
+  }, []);
 
   const handleLogin = async () => {
     const { error } = await supabase.auth.signInWithPassword({
@@ -22,6 +37,15 @@ export default function Login() {
     }
   };
 
+  if (loading) {
+    // Show a loading indicator while checking session
+    return (
+      <View style={[globalStyles.containerHome, { justifyContent: 'center', alignItems: 'center' }]}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+
   return (
     <View style={globalStyles.containerHome}>
       <Text style={globalStyles.title}>Login</Text>
@@ -29,12 +53,16 @@ export default function Login() {
       <TextInput
         style={globalStyles.input}
         placeholder="Email"
+        value={email}
         onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
       />
 
       <TextInput
         style={globalStyles.input}
         placeholder="Password"
+        value={password}
         secureTextEntry
         onChangeText={setPassword}
       />
