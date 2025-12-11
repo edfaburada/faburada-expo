@@ -1,7 +1,7 @@
 // app/_layout.tsx
 import { Stack } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { supabase } from '../supabase';
+import { supabase } from '../../supabase';
 
 export default function Layout() {
   const [session, setSession] = useState<any | null>(null);

@@ -1,8 +1,8 @@
-import { View, Text, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import { supabase } from '../supabase';
-import { globalStyles } from './styles';
 import { useEffect } from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
+import { supabase } from '../../supabase';
+import { globalStyles } from '../styles';
 
 export default function Dashboard() {
   const router = useRouter();
@@ -15,7 +15,7 @@ export default function Dashboard() {
       } = await supabase.auth.getSession();
 
       if (!session) {
-        router.replace('/login'); // redirect to login if not authenticated
+        router.replace('./login'); // redirect to login if not authenticated
       }
     };
 
@@ -24,7 +24,7 @@ export default function Dashboard() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    router.replace('/login');
+    router.replace('./login');
   };
 
   return (
@@ -34,7 +34,7 @@ export default function Dashboard() {
       {/* Go to Notes page */}
       <TouchableOpacity
         style={globalStyles.button}
-        onPress={() => router.push('/notes')}
+        onPress={() => router.push('./notes')}
       >
         <Text style={globalStyles.buttonText}>Go to Notes</Text>
       </TouchableOpacity>

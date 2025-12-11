@@ -40,7 +40,7 @@ export default function Index() {
 
   // If no session, redirect to login
   if (!session) {
-    router.replace('/login'); // <--- TypeScript-safe
+    router.replace('./login'); // <--- TypeScript-safe
     return null;
   }
 
@@ -57,7 +57,7 @@ export default function Index() {
         <Text style={globalStyles.buttonText}>Contact</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={globalStyles.button} onPress={() => router.push('/profile')}>
+      <TouchableOpacity style={globalStyles.button} onPress={() => router.push('./profile')}>
         <Text style={globalStyles.buttonText}>Profile</Text>
       </TouchableOpacity>
 
@@ -65,7 +65,7 @@ export default function Index() {
         <Text style={globalStyles.buttonText}>Settings</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={globalStyles.button} onPress={() => router.push('/dashboard')}>
+      <TouchableOpacity style={globalStyles.button} onPress={() => router.push('./dashboard')}>
         <Text style={globalStyles.buttonText}>Dashboard</Text>
       </TouchableOpacity>
 
@@ -73,7 +73,7 @@ export default function Index() {
         style={globalStyles.button}
         onPress={async () => {
           await supabase.auth.signOut();
-          router.replace('/login'); // <--- logout to login
+          router.replace('./login'); // <--- logout to login
         }}
       >
         <Text style={globalStyles.buttonText}>Logout</Text>

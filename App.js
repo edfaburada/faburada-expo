@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { onAuthStateChanged } from 'firebase/auth';
+import { useEffect, useState } from 'react';
 import { auth } from './firebase';
 
-import LoginScreen from './app/login';
-import RegisterScreen from './app/register';
-import DashboardScreen from './app/dashboard';
-import ProfileScreen from './app/profile';
 import AboutScreen from './app/about';
+import LoginScreen from './a./app/auth/register';
 import ContactScreen from './app/contact';
+import DashboardScreen from './app/tabs/dashboard';
+import ProfileScreen from './app/tabs/profile';
+import RegisterScreen from './app/register';
 import SettingsScreen from './app/settings';
 
 const Stack = createStackNavigator();

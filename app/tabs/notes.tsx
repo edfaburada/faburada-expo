@@ -1,7 +1,7 @@
 import { View, Text, TextInput, TouchableOpacity, FlatList } from 'react-native';
 import { useState, useEffect } from 'react';
-import { supabase } from '../supabase';
-import { globalStyles } from './styles';
+import { supabase } from '../../supabase';
+import { globalStyles } from '../styles';
 
 export default function Notes() {
   const [title, setTitle] = useState('');

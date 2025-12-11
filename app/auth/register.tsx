@@ -1,13 +1,13 @@
-import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { useState, useEffect } from 'react';
 import { useRouter } from 'expo-router';
-import { supabase } from '../supabase';
-import { globalStyles } from './styles';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { supabase } from '../../supabase';
+import { globalStyles } from '../styles';
 
-export default function Login() {
+export default function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(true); // For session check
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   // Check if user is already logged in
@@ -15,17 +15,17 @@ export default function Login() {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
-        router.replace('/dashboard'); // redirect if already logged in
+        router.replace('./dashboard'); // redirect if already logged in
       } else {
-        setLoading(false); // show login form if not logged in
+        setLoading(false); // show register form
       }
     };
 
     checkSession();
   }, []);
 
-  const handleLogin = async () => {
-    const { error } = await supabase.auth.signInWithPassword({
+  const handleRegister = async () => {
+    const { error } = await supabase.auth.signUp({
       email,
       password,
     });
@@ -33,12 +33,21 @@ export default function Login() {
     if (error) {
       alert(error.message);
     } else {
-      router.replace('./index');
+      // Automatically log in after registration
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (signInError) {
+        alert(signInError.message);
+      } else {
+        router.replace('./dashboard');
+      }
     }
   };
 
   if (loading) {
-    // Show a loading indicator while checking session
     return (
       <View style={[globalStyles.containerHome, { justifyContent: 'center', alignItems: 'center' }]}>
         <ActivityIndicator size="large" color="#0000ff" />
@@ -48,7 +57,7 @@ export default function Login() {
 
   return (
     <View style={globalStyles.containerHome}>
-      <Text style={globalStyles.title}>Login</Text>
+      <Text style={globalStyles.title}>Register</Text>
 
       <TextInput
         style={globalStyles.input}
@@ -67,12 +76,12 @@ export default function Login() {
         onChangeText={setPassword}
       />
 
-      <TouchableOpacity style={globalStyles.button} onPress={handleLogin}>
-        <Text style={globalStyles.buttonText}>Login</Text>
+      <TouchableOpacity style={globalStyles.button} onPress={handleRegister}>
+        <Text style={globalStyles.buttonText}>Create Account</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => router.push('/register')}>
-        <Text style={globalStyles.link}>Don't have an account? Register</Text>
+      <TouchableOpacity onPress={() => router.push('./login')}>
+        <Text style={globalStyles.link}>Already have an account? Login</Text>
       </TouchableOpacity>
     </View>
   );
