@@ -1,29 +1,43 @@
-// app/index.tsx
-import { useEffect } from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
+import { globalStyles } from './styles';
 import { supabase } from '../supabase';
 
 export default function Index() {
   const router = useRouter();
 
-  useEffect(() => {
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-
-      if (session) {
-        router.replace('/dashboard'); // go to Dashboard if logged in
-      } else {
-        router.replace('/login'); // go to Login if not logged in
-      }
-    };
-
-    checkSession();
-  }, []);
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.replace('/login');
+  };
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <ActivityIndicator size="large" color="#0000ff" />
+    <View style={globalStyles.containerHome}>
+      <Text style={globalStyles.title}>Welcome Home</Text>
+
+      <TouchableOpacity style={globalStyles.button} onPress={() => router.push('/about')}>
+        <Text style={globalStyles.buttonText}>About</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={globalStyles.button} onPress={() => router.push('/contact')}>
+        <Text style={globalStyles.buttonText}>Contact</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={globalStyles.button} onPress={() => router.push('/profile')}>
+        <Text style={globalStyles.buttonText}>Profile</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={globalStyles.button} onPress={() => router.push('/settings')}>
+        <Text style={globalStyles.buttonText}>Settings</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={globalStyles.button} onPress={() => router.push('/dashboard')}>
+        <Text style={globalStyles.buttonText}>Dashboard</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={globalStyles.button} onPress={handleLogout}>
+        <Text style={globalStyles.buttonText}>Logout</Text>
+      </TouchableOpacity>
     </View>
   );
 }

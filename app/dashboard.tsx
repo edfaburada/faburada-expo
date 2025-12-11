@@ -40,9 +40,10 @@ export default function Dashboard() {
       </TouchableOpacity>
 
       {/* Logout button */}
-      <TouchableOpacity style={globalStyles.button} onPress={handleLogout}>
-        <Text style={globalStyles.buttonText}>Logout</Text>
+      <TouchableOpacity style={globalStyles.button} onPress={() => router.push('/notes')}>
+        <Text style={globalStyles.buttonText}>Go to Notes</Text>
       </TouchableOpacity>
+
     </View>
   );
 }

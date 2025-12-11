@@ -33,7 +33,7 @@ export default function Login() {
     if (error) {
       alert(error.message);
     } else {
-      router.replace('/dashboard');
+      router.replace('./index');
     }
   };
 
