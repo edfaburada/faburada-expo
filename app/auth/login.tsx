@@ -2,7 +2,7 @@ import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { supabase } from '../../supabase';
-import { globalStyles } from '../styles';
+import { globalStyles } from '@/style';
 
 export default function Login() {
   const [email, setEmail] = useState('');

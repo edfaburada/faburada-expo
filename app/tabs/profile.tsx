@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
-import { globalStyles } from '../styles';
+import { globalStyles } from '@/style';
 
 export default function Profile() {
   const router = useRouter();
