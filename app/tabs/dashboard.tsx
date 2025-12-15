@@ -2,7 +2,7 @@ import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { supabase } from '../../supabase';
-import { globalStyles } from '../styles';
+import { globalStyles } from '@/style'; 
 
 export default function Dashboard() {
   const router = useRouter();

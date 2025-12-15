@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import { globalStyles } from './styles';
+import { globalStyles } from '@/style'; 
 
 export default function About() {
   const router = useRouter();

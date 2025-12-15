@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, Switch } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { globalStyles } from './styles';
+import { globalStyles } from '@/style'; 
 
 export default function Settings() {
   const router = useRouter();
