@@ -1,8 +1,9 @@
-import { useRouter } from 'expo-router';
-import { Image, Text, TouchableOpacity, View } from 'react-native';
 import { globalStyles } from '@/style';
+import { useRouter } from 'expo-router';
+import React from 'react';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 
-export default function Profile() {
+const Profile = () => {
   const router = useRouter();
 
   return (
@@ -29,4 +30,6 @@ export default function Profile() {
       </TouchableOpacity>
     </View>
   );
-}
+};
+
+export default React.memo(Profile);
