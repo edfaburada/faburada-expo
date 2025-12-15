@@ -11,13 +11,14 @@ export default function Profile() {
 
       {/* Profile Image */}
       <Image
-        source={require('../../app/assets/images/eve.webp')}
+        source={require('../../assets/images/eve.webp')}
         style={globalStyles.avatar}
-        defaultSource={require('../../app/assets/images/eve.webp')}
       />
 
       <Text style={globalStyles.name}>Evelyn Faburada</Text>
-      <Text style={globalStyles.bio}>Aspiring Developer | Learning Expo Router</Text>
+      <Text style={globalStyles.bio}>
+        Aspiring Developer | Learning Expo Router
+      </Text>
 
       {/* Go Back Home Button */}
       <TouchableOpacity
