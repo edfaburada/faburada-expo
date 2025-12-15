@@ -5,11 +5,11 @@ import { useEffect, useState } from 'react';
 import { auth } from './firebase';
 
 import AboutScreen from './app/about';
-import LoginScreen from './a./app/auth/register';
+import LoginScreen from './app/auth/register';
 import ContactScreen from './app/contact';
 import DashboardScreen from './app/tabs/dashboard';
 import ProfileScreen from './app/tabs/profile';
-import RegisterScreen from './app/register';
+import RegisterScreen from './app/auth/register';
 import SettingsScreen from './app/settings';
 
 const Stack = createStackNavigator();
