@@ -15,7 +15,7 @@ import SettingsScreen from './app/settings';
 const Stack = createStackNavigator();
 
 export default function App() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
