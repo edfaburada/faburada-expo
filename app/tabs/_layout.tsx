@@ -5,7 +5,7 @@ import { supabase } from '../../supabase';
 
 export default function Layout() {
   const [session, setSession] = useState<any | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     // Get current session on mount

@@ -7,7 +7,7 @@ import { globalStyles } from '@/style';
 
 export default function Index() {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [session, setSession] = useState<any | null>(null);
 
   useEffect(() => {
