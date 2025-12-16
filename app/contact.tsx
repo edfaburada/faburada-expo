@@ -1,3 +1,4 @@
+// contact.tsx
 import { View, Text, TouchableOpacity, Linking } from 'react-native';
 import { useRouter } from 'expo-router';
 import { globalStyles } from '@/style'; 

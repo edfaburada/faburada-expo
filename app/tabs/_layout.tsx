@@ -1,11 +1,12 @@
 // app/_layout.tsx
 import { Stack } from 'expo-router';
 import { useEffect, useState } from 'react';
+import { ActivityIndicator, View } from 'react-native';
 import { supabase } from '../../supabase';
 
 export default function Layout() {
   const [session, setSession] = useState<any | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // start as true
 
   useEffect(() => {
     // Get current session on mount
@@ -25,28 +26,33 @@ export default function Layout() {
     return () => listener.subscription.unsubscribe();
   }, []);
 
-  // While loading, render nothing (or spinner if you want)
-  if (loading) return null;
+  // Show loading spinner while checking session
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
 
   return (
-<Stack>
-  {!session ? (
-    <>
-      <Stack.Screen name="login" />
-      <Stack.Screen name="register" />
-    </>
-  ) : (
-    <>
-      <Stack.Screen name="index" />
-      <Stack.Screen name="dashboard" />
-      <Stack.Screen name="notes" />
-      <Stack.Screen name="about" />
-      <Stack.Screen name="contact" />
-      <Stack.Screen name="profile" />
-      <Stack.Screen name="settings" />
-    </>
-  )}
-</Stack>
-
+    <Stack>
+      {!session ? (
+        <>
+          <Stack.Screen name="login" />
+          <Stack.Screen name="register" />
+        </>
+      ) : (
+        <>
+          <Stack.Screen name="index" />
+          <Stack.Screen name="dashboard" />
+          <Stack.Screen name="notes" />
+          <Stack.Screen name="about" />
+          <Stack.Screen name="contact" />
+          <Stack.Screen name="profile" />
+          <Stack.Screen name="settings" />
+        </>
+      )}
+    </Stack>
   );
 }

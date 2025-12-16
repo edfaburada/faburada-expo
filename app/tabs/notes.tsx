@@ -1,3 +1,4 @@
+// Notes.tsx
 import { View, Text, TextInput, TouchableOpacity, FlatList } from 'react-native';
 import { useState, useEffect } from 'react';
 import { supabase } from '../../supabase';

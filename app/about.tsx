@@ -1,3 +1,4 @@
+// about.tsx
 import { View, Text, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { globalStyles } from '@/style'; 

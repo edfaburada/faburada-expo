@@ -1,3 +1,4 @@
+// login.tsx
 import { globalStyles } from '@/style';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -26,22 +27,23 @@ export default function Login() {
 
   // Login handler
   const handleLogin = async () => {
-    setLoading(true);
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+  if (!email || !password) {
+    alert("Please enter email and password.");
+    return;
+  }
 
-    if (error) {
-      alert(error.message);
-      setLoading(false);
-    } else if (data?.user) {
-      router.replace('./dashboard'); // redirect to dashboard
-    } else {
-      alert('Login failed');
-      setLoading(false);
-    }
-  };
+  setLoading(true);
+
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+  if (error) {
+    alert(error.message);
+  } else if (data?.user) {
+    router.replace("./dashboard");
+  }
+
+  setLoading(false);
+};
 
   // Simple registration form
   const handleRegister = async () => {

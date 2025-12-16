@@ -1,3 +1,4 @@
+// profile.tsx
 import { useRouter } from 'expo-router';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { globalStyles } from '@/style';

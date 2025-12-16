@@ -1,3 +1,4 @@
+// dashboard.tsx
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';

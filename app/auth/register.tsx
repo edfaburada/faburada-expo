@@ -1,3 +1,4 @@
+// register.tsx
 import { globalStyles } from '@/style';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -24,38 +25,39 @@ export default function Register() {
     checkSession();
   }, []);
 
-  const handleRegister = async () => {
-    setLoading(true);
+const handleRegister = async () => {
+  if (!email || !password) {
+    alert("Please enter email and password.");
+    return;
+  }
 
-    if (!email || !password) {
-      alert('Please enter email and password');
-      setLoading(false);
-      return;
-    }
+  setLoading(true);
 
-    const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: { emailRedirectTo: "yourapp://login" } // Optional deep link
+  });
+
+  if (error) {
+    alert(error.message);
+    setLoading(false);
+  } else {
+    alert("Registration successful! Please check your email to confirm before logging in.");
+    // Automatically log in after registration
+    const { error: signInError } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
-    if (error) {
-      alert(error.message);
+    if (signInError) {
+      alert(signInError.message);
       setLoading(false);
     } else {
-      // Automatically log in after registration
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (signInError) {
-        alert(signInError.message);
-        setLoading(false);
-      } else {
-        router.replace('./dashboard');
-      }
+      router.replace('./dashboard');
     }
-  };
+  }
+};
 
 const goToLogin = () => {
   if (router) router.push('./login');
@@ -102,3 +104,5 @@ const goToLogin = () => {
     </View>
   );
 }
+
+

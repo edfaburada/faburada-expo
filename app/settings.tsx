@@ -1,3 +1,4 @@
+// settings.tsx
 import { View, Text, TouchableOpacity, Switch } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
