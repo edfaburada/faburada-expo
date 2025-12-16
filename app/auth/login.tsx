@@ -7,7 +7,7 @@ import { globalStyles } from '@/style';
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(true); // For session check
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   // Check if user is already logged in
@@ -25,20 +25,24 @@ export default function Login() {
   }, []);
 
   const handleLogin = async () => {
-    const { error } = await supabase.auth.signInWithPassword({
+    setLoading(true);
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
     if (error) {
       alert(error.message);
+      setLoading(false);
+    } else if (data?.user) {
+      router.replace('./dashboard'); // redirect to dashboard
     } else {
-      router.replace('./index');
+      alert('Login failed');
+      setLoading(false);
     }
   };
 
   if (loading) {
-    // Show a loading indicator while checking session
     return (
       <View style={[globalStyles.containerHome, { justifyContent: 'center', alignItems: 'center' }]}>
         <ActivityIndicator size="large" color="#0000ff" />
