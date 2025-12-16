@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
 import { supabase } from '../supabase';
-import { globalStyles } from '@/style'; 
+import { globalStyles } from '@/style';
 
 export default function Index() {
   const router = useRouter();
@@ -11,11 +11,10 @@ export default function Index() {
   const [session, setSession] = useState<any | null>(null);
 
   useEffect(() => {
+    // Check current session
     const getSession = async () => {
       const { data } = await supabase.auth.getSession();
-      if (data.session) {
-        setSession(data.session);
-      }
+      setSession(data.session);
       setLoading(false);
     };
 
@@ -29,7 +28,7 @@ export default function Index() {
     return () => listener.subscription.unsubscribe();
   }, []);
 
-  // Show spinner while checking session
+  // Show loading spinner while checking session
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -38,13 +37,13 @@ export default function Index() {
     );
   }
 
-  // If no session, redirect to login
+  // Redirect to login if not logged in
   if (!session) {
-    router.replace('./login'); // <--- TypeScript-safe
+    router.replace('./login'); // safe redirect in Expo Router
     return null;
   }
 
-  // Home page after login
+  // Home screen if logged in
   return (
     <View style={globalStyles.containerHome}>
       <Text style={globalStyles.title}>Welcome Home</Text>
@@ -73,7 +72,7 @@ export default function Index() {
         style={globalStyles.button}
         onPress={async () => {
           await supabase.auth.signOut();
-          router.replace('./login'); // <--- logout to login
+          router.replace('./login');
         }}
       >
         <Text style={globalStyles.buttonText}>Logout</Text>
