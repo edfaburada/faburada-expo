@@ -9,21 +9,27 @@ export default function Layout() {
   const [loading, setLoading] = useState(true); // start as true
 
   useEffect(() => {
-    // Get current session on mount
+    let isMounted = true; // prevent state update if unmounted
+
     const getSession = async () => {
       const { data } = await supabase.auth.getSession();
-      setSession(data.session);
-      setLoading(false);
+      if (isMounted) {
+        setSession(data.session);
+        setLoading(false);
+      }
     };
 
     getSession();
 
     // Listen for auth state changes (login/logout)
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
+      if (isMounted) setSession(session);
     });
 
-    return () => listener.subscription.unsubscribe();
+    return () => {
+      isMounted = false;
+      listener.subscription.unsubscribe();
+    };
   }, []);
 
   // Show loading spinner while checking session
@@ -39,18 +45,20 @@ export default function Layout() {
     <Stack>
       {!session ? (
         <>
-          <Stack.Screen name="login" />
-          <Stack.Screen name="register" />
+          {/* Login/Register flow */}
+          <Stack.Screen name="login" options={{ headerShown: false }} />
+          <Stack.Screen name="register" options={{ headerShown: false }} />
         </>
       ) : (
         <>
-          <Stack.Screen name="index" />
-          <Stack.Screen name="dashboard" />
-          <Stack.Screen name="notes" />
-          <Stack.Screen name="about" />
-          <Stack.Screen name="contact" />
-          <Stack.Screen name="profile" />
-          <Stack.Screen name="settings" />
+          {/* App screens after login */}
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="dashboard" options={{ headerShown: false }} />
+          <Stack.Screen name="notes" options={{ headerShown: false }} />
+          <Stack.Screen name="about" options={{ headerShown: false }} />
+          <Stack.Screen name="contact" options={{ headerShown: false }} />
+          <Stack.Screen name="profile" options={{ headerShown: false }} />
+          <Stack.Screen name="settings" options={{ headerShown: false }} />
         </>
       )}
     </Stack>
