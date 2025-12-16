@@ -1,46 +1,54 @@
 // app/register.tsx
-import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { useRouter } from 'expo-router';
-import { supabase } from '../../supabase';
 import { globalStyles } from '@/style';
+import { useRouter } from 'expo-router';
+import { useState } from 'react';
+import { ActivityIndicator, Alert, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { supabase } from '../../supabase';
 
 export default function Register() {
-  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleRegister = async () => {
     if (!email || !password) {
-      alert('Please enter email and password.');
+      Alert.alert('Error', 'Please enter email and password.');
       return;
     }
 
     setLoading(true);
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: 'your-app-url/login', // redirect after confirmation
+        },
+      });
 
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: 'yourapp://login', // optional deep link for mobile apps
-      },
-    });
-
-    if (error) {
-      alert(error.message);
-    } else {
-      alert(
-        'Registration successful! Please check your email to confirm your account before logging in.'
-      );
-      router.push('./login');
+      if (error) {
+        Alert.alert('Registration Failed', error.message);
+      } else {
+        Alert.alert(
+          'Check Your Email',
+          'An email has been sent to confirm your account. After confirming, you can log in.'
+        );
+        router.push('./login');
+      }
+    } catch (err: any) {
+      Alert.alert('Error', err.message);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
     <View style={globalStyles.containerHome}>
+      {loading && (
+        <ActivityIndicator size="large" color="#0000ff" style={{ marginBottom: 20 }} />
+      )}
+
       <Text style={globalStyles.title}>Register</Text>
 
       <TextInput
@@ -56,16 +64,12 @@ export default function Register() {
         style={globalStyles.input}
         placeholder="Password"
         value={password}
-        onChangeText={setPassword}
         secureTextEntry
+        onChangeText={setPassword}
       />
 
       <TouchableOpacity style={globalStyles.button} onPress={handleRegister}>
-        {loading ? (
-          <ActivityIndicator color="#fff" />
-        ) : (
-          <Text style={globalStyles.buttonText}>Register</Text>
-        )}
+        <Text style={globalStyles.buttonText}>Create Account</Text>
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => router.push('./login')}>

@@ -1,41 +1,46 @@
 // app/login.tsx
-import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { useRouter } from 'expo-router';
-import { supabase } from '../../supabase';
 import { globalStyles } from '@/style';
+import { useRouter } from 'expo-router';
+import { useState } from 'react';
+import { ActivityIndicator, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
+import { supabase } from '../../supabase';
 
 export default function Login() {
-  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleLogin = async () => {
     if (!email || !password) {
-      alert('Please enter your email and password.');
+      Alert.alert('Error', 'Please enter your email and password.');
       return;
     }
 
     setLoading(true);
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) {
-      // Supabase returns "Email not confirmed" error if email confirmation is required
-      alert(error.message);
-    } else if (data?.user) {
-      router.replace('./dashboard');
+      if (error) {
+        Alert.alert('Login Failed', error.message);
+      } else if (data.user) {
+        router.replace('./dashboard');
+      } else {
+        Alert.alert('Login Failed', 'Please check your credentials or confirm your email.');
+      }
+    } catch (err: any) {
+      Alert.alert('Error', err.message);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
     <View style={globalStyles.containerHome}>
+      {loading && (
+        <ActivityIndicator size="large" color="#0000ff" style={{ marginBottom: 20 }} />
+      )}
+
       <Text style={globalStyles.title}>Login</Text>
 
       <TextInput
@@ -51,16 +56,12 @@ export default function Login() {
         style={globalStyles.input}
         placeholder="Password"
         value={password}
-        onChangeText={setPassword}
         secureTextEntry
+        onChangeText={setPassword}
       />
 
       <TouchableOpacity style={globalStyles.button} onPress={handleLogin}>
-        {loading ? (
-          <ActivityIndicator color="#fff" />
-        ) : (
-          <Text style={globalStyles.buttonText}>Login</Text>
-        )}
+        <Text style={globalStyles.buttonText}>Login</Text>
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => router.push('./register')}>

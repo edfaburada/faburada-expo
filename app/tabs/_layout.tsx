@@ -12,18 +12,22 @@ export default function Layout() {
     let isMounted = true; // prevent state update if unmounted
 
     const getSession = async () => {
-      const { data } = await supabase.auth.getSession();
-      if (isMounted) {
-        setSession(data.session);
-        setLoading(false);
+      try {
+        const { data, error } = await supabase.auth.getSession();
+        if (error) throw error;
+        if (isMounted) setSession(data.session);
+      } catch (err) {
+        console.error('Error fetching session:', err);
+      } finally {
+        if (isMounted) setLoading(false);
       }
     };
 
     getSession();
 
     // Listen for auth state changes (login/logout)
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (isMounted) setSession(session);
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, newSession) => {
+      if (isMounted) setSession(newSession);
     });
 
     return () => {
@@ -42,7 +46,7 @@ export default function Layout() {
   }
 
   return (
-    <Stack>
+    <Stack initialRouteName={!session ? 'login' : 'index'}>
       {!session ? (
         <>
           {/* Login/Register flow */}
