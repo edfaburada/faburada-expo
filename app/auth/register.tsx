@@ -1,77 +1,43 @@
-// register.tsx
-import { globalStyles } from '@/style';
+// app/register.tsx
+import { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { supabase } from '../../supabase';
+import { globalStyles } from '@/style';
 
 export default function Register() {
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
 
-  // Check if user is already logged in
-  useEffect(() => {
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        router.replace('./dashboard');
-      } else {
-        setLoading(false); // show register form
-      }
-    };
+  const handleRegister = async () => {
+    if (!email || !password) {
+      alert('Please enter email and password.');
+      return;
+    }
 
-    checkSession();
-  }, []);
+    setLoading(true);
 
-const handleRegister = async () => {
-  if (!email || !password) {
-    alert("Please enter email and password.");
-    return;
-  }
-
-  setLoading(true);
-
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: { emailRedirectTo: "yourapp://login" } // Optional deep link
-  });
-
-  if (error) {
-    alert(error.message);
-    setLoading(false);
-  } else {
-    alert("Registration successful! Please check your email to confirm before logging in.");
-    // Automatically log in after registration
-    const { error: signInError } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        emailRedirectTo: 'yourapp://login', // optional deep link for mobile apps
+      },
     });
 
-    if (signInError) {
-      alert(signInError.message);
-      setLoading(false);
+    if (error) {
+      alert(error.message);
     } else {
-      router.replace('./dashboard');
+      alert(
+        'Registration successful! Please check your email to confirm your account before logging in.'
+      );
+      router.push('./login');
     }
-  }
-};
 
-const goToLogin = () => {
-  if (router) router.push('./login');
-};
-
-
-
-  if (loading) {
-    return (
-      <View style={[globalStyles.containerHome, { justifyContent: 'center', alignItems: 'center' }]}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    );
-  }
+    setLoading(false);
+  };
 
   return (
     <View style={globalStyles.containerHome}>
@@ -90,19 +56,21 @@ const goToLogin = () => {
         style={globalStyles.input}
         placeholder="Password"
         value={password}
-        secureTextEntry
         onChangeText={setPassword}
+        secureTextEntry
       />
 
       <TouchableOpacity style={globalStyles.button} onPress={handleRegister}>
-        <Text style={globalStyles.buttonText}>Create Account</Text>
+        {loading ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <Text style={globalStyles.buttonText}>Register</Text>
+        )}
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={goToLogin}>
+      <TouchableOpacity onPress={() => router.push('./login')}>
         <Text style={globalStyles.link}>Already have an account? Login</Text>
       </TouchableOpacity>
     </View>
   );
 }
-
-
