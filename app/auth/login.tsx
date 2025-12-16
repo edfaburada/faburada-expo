@@ -8,23 +8,23 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(true);
+  const [isRegistering, setIsRegistering] = useState(false);
   const router = useRouter();
 
   // Check if user is already logged in
   useEffect(() => {
-  const checkSession = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session) {
-      router.replace('./dashboard'); // go straight to dashboard
-    } else {
-      setLoading(false); // show login form
-    }
-  };
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        router.replace('./dashboard'); // go straight to dashboard
+      } else {
+        setLoading(false); // show login form
+      }
+    };
+    checkSession();
+  }, []);
 
-  checkSession();
-}, []);
-
-
+  // Login handler
   const handleLogin = async () => {
     setLoading(true);
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -43,6 +43,24 @@ export default function Login() {
     }
   };
 
+  // Simple registration form
+  const handleRegister = async () => {
+    setLoading(true);
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+
+    if (error) {
+      alert(error.message);
+      setLoading(false);
+    } else {
+      alert('Account created! Please check your email to confirm.');
+      setIsRegistering(false);
+      setLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <View style={[globalStyles.containerHome, { justifyContent: 'center', alignItems: 'center' }]}>
@@ -53,7 +71,7 @@ export default function Login() {
 
   return (
     <View style={globalStyles.containerHome}>
-      <Text style={globalStyles.title}>Login</Text>
+      <Text style={globalStyles.title}>{isRegistering ? 'Register' : 'Login'}</Text>
 
       <TextInput
         style={globalStyles.input}
@@ -72,12 +90,17 @@ export default function Login() {
         onChangeText={setPassword}
       />
 
-      <TouchableOpacity style={globalStyles.button} onPress={handleLogin}>
-        <Text style={globalStyles.buttonText}>Login</Text>
+      <TouchableOpacity
+        style={globalStyles.button}
+        onPress={isRegistering ? handleRegister : handleLogin}
+      >
+        <Text style={globalStyles.buttonText}>{isRegistering ? 'Register' : 'Login'}</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => router.push('./register')}>
-        <Text style={globalStyles.link}>Don't have an account? Register</Text>
+      <TouchableOpacity onPress={() => setIsRegistering(!isRegistering)}>
+        <Text style={globalStyles.link}>
+          {isRegistering ? 'Already have an account? Login' : "Don't have an account? Register"}
+        </Text>
       </TouchableOpacity>
     </View>
   );
