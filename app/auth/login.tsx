@@ -1,8 +1,8 @@
+import { globalStyles } from '@/style';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { supabase } from '../../supabase';
-import { globalStyles } from '@/style';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -12,17 +12,18 @@ export default function Login() {
 
   // Check if user is already logged in
   useEffect(() => {
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        router.replace('./dashboard'); // redirect if already logged in
-      } else {
-        setLoading(false); // show login form if not logged in
-      }
-    };
+  const checkSession = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      router.replace('./dashboard'); // go straight to dashboard
+    } else {
+      setLoading(false); // show login form
+    }
+  };
 
-    checkSession();
-  }, []);
+  checkSession();
+}, []);
+
 
   const handleLogin = async () => {
     setLoading(true);

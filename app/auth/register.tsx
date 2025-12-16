@@ -1,8 +1,8 @@
+import { globalStyles } from '@/style';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { supabase } from '../../supabase';
-import { globalStyles } from '@/style'; 
 
 export default function Register() {
   const [email, setEmail] = useState('');
@@ -15,7 +15,7 @@ export default function Register() {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
-        router.replace('./dashboard'); // redirect if already logged in
+        router.replace('./dashboard');
       } else {
         setLoading(false); // show register form
       }
@@ -25,6 +25,14 @@ export default function Register() {
   }, []);
 
   const handleRegister = async () => {
+    setLoading(true);
+
+    if (!email || !password) {
+      alert('Please enter email and password');
+      setLoading(false);
+      return;
+    }
+
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -32,6 +40,7 @@ export default function Register() {
 
     if (error) {
       alert(error.message);
+      setLoading(false);
     } else {
       // Automatically log in after registration
       const { error: signInError } = await supabase.auth.signInWithPassword({
@@ -41,11 +50,18 @@ export default function Register() {
 
       if (signInError) {
         alert(signInError.message);
+        setLoading(false);
       } else {
         router.replace('./dashboard');
       }
     }
   };
+
+const goToLogin = () => {
+  if (router) router.push('./login');
+};
+
+
 
   if (loading) {
     return (
@@ -80,7 +96,7 @@ export default function Register() {
         <Text style={globalStyles.buttonText}>Create Account</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => router.push('./login')}>
+      <TouchableOpacity onPress={goToLogin}>
         <Text style={globalStyles.link}>Already have an account? Login</Text>
       </TouchableOpacity>
     </View>
